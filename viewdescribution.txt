@@ -1,0 +1,927 @@
+Virtual Office 项目
+一个基于 Electron + React + TypeScript 的虚拟办公空间应用，提供在线协作、实时聊天和视频会议等功能。
+
+项目概览
+Virtual Office 是一个现代化的远程办公协作平台，通过虚拟空间模拟线下办公室环境，让团队成员可以在线进行实时交流和协作。
+
+主要功能
+🚀 虚拟办公空间：可视化办公环境，显示团队成员位置和状态
+💬 实时聊天：支持公共频道和私人消息，支持消息翻译
+📹 视频会议：创建会议室，支持音视频通话、屏幕共享
+👤 用户管理：用户认证、个人资料管理、头像创建
+📱 响应式设计：支持桌面和移动设备
+项目结构
+├── src/
+│   ├── main/             # Electron 主进程
+│   │   └── index.ts      # 主进程入口文件
+│   ├── preload/          # 预加载脚本
+│   │   ├── index.d.ts    # 类型定义
+│   │   └── index.ts      # 预加载脚本实现
+│   └── renderer/         # 渲染进程
+│       ├── index.html    # HTML 入口
+│       └── src/
+│           ├── App.tsx   # 应用主组件
+│           ├── api/      # API 接口服务
+│           ├── assets/   # 静态资源
+│           ├── components/ # React 组件
+│           ├── styles/   # 样式文件
+│           ├── types/    # TypeScript 类型定义
+│           └── main.tsx  # 渲染进程入口
+├── build/                # 构建相关资源
+├── electron.vite.config.ts # Vite 配置
+├── tsconfig.json         # TypeScript 配置
+└── package.json          # 项目依赖和脚本
+核心组件
+VirtualOffice：虚拟办公空间主组件，管理用户位置和交互
+UserAvatar：用户头像组件，支持拖放移动和信息展示
+ChatPage：聊天功能页面，包含聊天频道和消息界面
+MeetingRoom：视频会议室组件
+OnlinePanel：在线用户面板
+Auth：用户认证组件
+技术栈
+前端框架：React 19 + TypeScript
+桌面应用框架：Electron 38
+构建工具：Vite 7
+UI 组件库：Radix UI
+样式方案：Tailwind CSS 4
+状态管理：React Hooks
+HTTP 客户端：Axios
+图标库：Lucide React
+开发与构建
+环境要求
+Node.js 18+
+npm 或 yarn
+安装依赖
+$ npm install
+开发模式
+$ npm run dev
+构建应用
+# Windows 版本
+$ npm run build:win
+
+# macOS 版本
+$ npm run build:mac
+
+# Linux 版本
+$ npm run build:linux
+后端 Spring Boot 开发人员接口使用手册
+接口基础信息
+API 基础 URL：http://localhost:8080/api/v1
+认证方式：JWT Token (Bearer 认证)
+请求/响应格式：JSON
+WebSocket URL：ws://localhost:8080/ws (需在查询参数中提供 token)
+后端实现指南
+1. 用户认证模块
+后端需实现以下 API 接口：
+
+登录：POST /auth/login
+注册：POST /auth/register
+获取当前用户信息：GET /auth/me
+更新用户信息：PUT /auth/profile
+2. 虚拟空间模块
+后端需实现以下功能：
+
+虚拟空间管理：创建、查询虚拟空间及其区域定义
+用户位置跟踪：更新和广播用户在虚拟空间中的位置
+在线状态管理：实时更新和广播用户在线状态
+核心接口：
+
+GET /virtual-spaces - 获取所有虚拟空间
+PUT /virtual-spaces/position - 更新用户位置
+GET /virtual-spaces/:spaceId/members - 获取空间成员
+3. 聊天模块
+后端需实现：
+
+频道管理：创建和管理聊天频道
+消息系统：发送、接收和存储消息
+消息翻译：集成第三方翻译服务
+核心接口：
+
+GET /chat/channels - 获取频道列表
+GET /chat/channels/:channelId/messages - 获取消息
+POST /chat/channels/:channelId/messages - 发送消息
+4. 会议模块
+后端需实现：
+
+会议室管理：创建和配置会议室
+参与者管理：加入/离开会议，更新参与者状态
+录制功能：会议录制的开始、停止和存储
+核心接口：
+
+GET /meetings/rooms - 获取会议室列表
+POST /meetings/rooms/:meetingId/join - 加入会议
+PUT /meetings/rooms/:meetingId/participant/status - 更新参与者状态
+WebSocket 实现要求
+后端需实现 WebSocket 服务，用于实时通信：
+
+认证处理：验证 URL 中的 JWT Token
+消息类型：
+POSITION_UPDATE: 用户位置更新广播
+NEW_MESSAGE: 新消息通知
+MEETING_STATUS: 会议状态更新
+数据模型设计
+主要实体关系：
+
+用户 (User)
+
+与用户会话、消息、会议参与者等关联
+虚拟空间 (VirtualSpace)
+
+包含多个区域 (Zone)
+与用户存在状态 (UserPresence) 关联
+聊天频道 (ChatChannel)
+
+包含多个消息 (Message)
+与用户多对多关联
+会议室 (MeetingRoom)
+
+包含多个参与者 (MeetingParticipant)
+安全建议
+认证与授权：
+
+所有 API 端点需验证 JWT Token
+实现细粒度的权限控制
+数据验证：
+
+对所有输入参数进行严格验证
+防止 SQL 注入和 XSS 攻击
+速率限制：
+
+对敏感接口实现速率限制
+防止恶意请求和滥用
+调试与测试
+前端提供了测试 API 客户端，位于 src/renderer/src/api/test-api.ts，后端开发人员可以参考该文件了解前端的 API 调用方式。
+
+常见问题
+JWT 过期处理：前端会自动处理 Token 过期，后端需返回 401 状态码
+WebSocket 连接断开：前端会自动重连，后端需正确处理连接状态
+跨域问题：开发环境中需配置 CORS 允许前端域名访问
+更多资源
+完整 API 文档：src/renderer/src/api/API_DOCUMENTATION.md 具体内容如下：
+
+Virtual Office API 接口文档
+本文档描述了Virtual Office前端与Spring Boot后端之间的所有API交互接口。
+
+基础配置
+API基础URL: http://localhost:8080/api/v1
+认证方式: JWT Token (Bearer 认证)
+请求/响应格式: JSON
+1. 用户认证 (Authentication)
+1.1 用户登录
+URL: /auth/login 方法: POST 请求体:
+
+{
+  "email": "user@example.com",
+  "password": "password123",
+  "rememberMe": true
+}
+成功响应:
+
+{
+  "token": "jwt_token_here",
+  "user": {
+    "id": "1",
+    "name": "John Doe",
+    "email": "user@example.com",
+    "avatar": "https://example.com/avatar.jpg",
+    "role": "user",
+    "status": "online"
+  }
+}
+1.2 用户注册
+URL: /auth/register 方法: POST 请求体:
+
+{
+  "name": "John Doe",
+  "email": "user@example.com",
+  "password": "password123",
+  "confirmPassword": "password123",
+  "role": "user"
+}
+成功响应:
+
+{
+  "token": "jwt_token_here",
+  "user": {
+    "id": "1",
+    "name": "John Doe",
+    "email": "user@example.com",
+    "role": "user"
+  }
+}
+1.3 获取当前用户信息
+URL: /auth/me 方法: GET 认证: 需要JWT Token 成功响应:
+
+{
+  "id": "1",
+  "name": "John Doe",
+  "email": "user@example.com",
+  "avatar": "https://example.com/avatar.jpg",
+  "role": "user",
+  "status": "online"
+}
+1.4 更新用户信息
+URL: /auth/profile 方法: PUT 认证: 需要JWT Token 请求体:
+
+{
+  "name": "John Smith",
+  "avatar": "https://example.com/new_avatar.jpg"
+}
+成功响应:
+
+{
+  "id": "1",
+  "name": "John Smith",
+  "email": "user@example.com",
+  "avatar": "https://example.com/new_avatar.jpg",
+  "role": "user"
+}
+1.5 忘记密码
+URL: /auth/forgot-password 方法: POST 请求体:
+
+{
+  "email": "user@example.com"
+}
+成功响应:
+
+{
+  "success": true,
+  "message": "重置密码邮件已发送"
+}
+1.6 重置密码
+URL: /auth/reset-password 方法: POST 请求体:
+
+{
+  "token": "reset_token_here",
+  "newPassword": "new_password123",
+  "confirmPassword": "new_password123"
+}
+成功响应:
+
+{
+  "success": true,
+  "message": "密码重置成功"
+}
+2. 虚拟空间 (Virtual Space)
+2.1 获取所有虚拟空间
+URL: /virtual-spaces 方法: GET 认证: 需要JWT Token 成功响应:
+
+[
+  {
+    "id": "1",
+    "name": "Main Office",
+    "description": "Main virtual office space",
+    "zones": [...],
+    "createdAt": "2023-01-01T00:00:00Z"
+  }
+]
+2.2 获取虚拟空间详情
+URL: /virtual-spaces/:spaceId 方法: GET 认证: 需要JWT Token 成功响应:
+
+{
+  "id": "1",
+  "name": "Main Office",
+  "description": "Main virtual office space",
+  "zones": [
+    {
+      "id": "zone1",
+      "spaceId": "1",
+      "name": "Work Area",
+      "type": "workspace",
+      "coordinates": {
+        "x": 0,
+        "y": 0,
+        "width": 100,
+        "height": 100
+      }
+    }
+  ],
+  "createdAt": "2023-01-01T00:00:00Z"
+}
+2.3 更新用户位置
+URL: /virtual-spaces/position 方法: PUT 认证: 需要JWT Token 请求体:
+
+{
+  "spaceId": "1",
+  "zoneId": "zone1",
+  "x": 50,
+  "y": 30
+}
+成功响应:
+
+{
+  "id": "presence1",
+  "userId": "1",
+  "spaceId": "1",
+  "zoneId": "zone1",
+  "position": { "x": 50, "y": 30 },
+  "status": "online",
+  "lastActive": "2023-01-01T10:00:00Z"
+}
+2.4 进入虚拟空间
+URL: /virtual-spaces/:spaceId/enter 方法: POST 认证: 需要JWT Token 成功响应:
+
+{
+  "id": "presence1",
+  "userId": "1",
+  "spaceId": "1",
+  "position": { "x": 0, "y": 0 },
+  "status": "online",
+  "lastActive": "2023-01-01T10:00:00Z"
+}
+2.5 离开虚拟空间
+URL: /virtual-spaces/:spaceId/leave 方法: POST 认证: 需要JWT Token 成功响应:
+
+{
+  "success": true
+}
+2.6 获取空间成员
+URL: /virtual-spaces/:spaceId/members 方法: GET 认证: 需要JWT Token 成功响应:
+
+[
+  {
+    "id": "presence1",
+    "userId": "1",
+    "spaceId": "1",
+    "position": { "x": 50, "y": 30 },
+    "status": "online",
+    "lastActive": "2023-01-01T10:00:00Z"
+  }
+]
+3. 聊天功能 (Chat)
+3.1 获取聊天频道列表
+URL: /chat/channels 方法: GET 认证: 需要JWT Token 成功响应:
+
+[
+  {
+    "id": "channel1",
+    "name": "General",
+    "type": "public",
+    "members": [...],
+    "createdAt": "2023-01-01T00:00:00Z",
+    "lastMessage": {
+      "id": "msg1",
+      "content": "Hello everyone",
+      "createdAt": "2023-01-01T10:00:00Z"
+    }
+  }
+]
+3.2 获取聊天消息
+URL: /chat/channels/:channelId/messages 方法: GET 查询参数: limit=50&offset=0 认证: 需要JWT Token 成功响应:
+
+[
+  {
+    "id": "msg1",
+    "channelId": "channel1",
+    "senderId": "1",
+    "content": "Hello everyone",
+    "type": "text",
+    "createdAt": "2023-01-01T10:00:00Z",
+    "sender": {
+      "id": "1",
+      "name": "John Doe",
+      "avatar": "https://example.com/avatar.jpg"
+    }
+  }
+]
+3.3 发送消息
+URL: /chat/channels/:channelId/messages 方法: POST 认证: 需要JWT Token 请求体:
+
+{
+  "content": "Hello there!",
+  "type": "text"
+}
+成功响应:
+
+{
+  "id": "msg2",
+  "channelId": "channel1",
+  "senderId": "1",
+  "content": "Hello there!",
+  "type": "text",
+  "createdAt": "2023-01-01T10:05:00Z"
+}
+3.4 翻译消息
+URL: /chat/messages/:messageId/translate 方法: POST 认证: 需要JWT Token 请求体:
+
+{
+  "targetLanguage": "zh"
+}
+成功响应:
+
+{
+  "translatedText": "你好！",
+  "sourceLanguage": "en",
+  "targetLanguage": "zh"
+}
+3.5 创建聊天频道
+URL: /chat/channels 方法: POST 认证: 需要JWT Token 请求体:
+
+{
+  "name": "Project Team",
+  "type": "group"
+}
+成功响应:
+
+{
+  "id": "channel2",
+  "name": "Project Team",
+  "type": "group",
+  "members": [...],
+  "createdAt": "2023-01-01T11:00:00Z"
+}
+4. 会议功能 (Meeting)
+4.1 获取会议室列表
+URL: /meetings/rooms 方法: GET 认证: 需要JWT Token 成功响应:
+
+[
+  {
+    "id": "meeting1",
+    "name": "Conference Room A",
+    "capacity": 10,
+    "isLocked": false,
+    "participants": [...]
+  }
+]
+4.2 创建会议室
+URL: /meetings/rooms 方法: POST 认证: 需要JWT Token 请求体:
+
+{
+  "name": "Team Meeting",
+  "virtualSpaceId": "1",
+  "capacity": 8
+}
+成功响应:
+
+{
+  "id": "meeting2",
+  "name": "Team Meeting",
+  "virtualSpaceId": "1",
+  "capacity": 8,
+  "isLocked": false,
+  "participants": []
+}
+4.3 加入会议
+URL: /meetings/rooms/:meetingId/join 方法: POST 认证: 需要JWT Token 成功响应:
+
+{
+  "id": "participant1",
+  "meetingId": "meeting1",
+  "userId": "1",
+  "user": {
+    "id": "1",
+    "name": "John Doe"
+  },
+  "isHost": false,
+  "isSpeaking": false,
+  "hasMic": true,
+  "hasCamera": true,
+  "hasHandRaised": false,
+  "joinedAt": "2023-01-01T12:00:00Z"
+}
+4.4 离开会议
+URL: /meetings/rooms/:meetingId/leave 方法: POST 认证: 需要JWT Token 成功响应:
+
+{
+  "success": true
+}
+4.5 更新参与者状态
+URL: /meetings/rooms/:meetingId/participant/status 方法: PUT 认证: 需要JWT Token 请求体:
+
+{
+  "hasMic": false,
+  "hasCamera": true,
+  "hasHandRaised": false
+}
+成功响应:
+
+{
+  "id": "participant1",
+  "meetingId": "meeting1",
+  "userId": "1",
+  "hasMic": false,
+  "hasCamera": true,
+  "hasHandRaised": false
+}
+4.6 开始/停止录制
+URL: /meetings/rooms/:meetingId/recording/start 方法: POST 认证: 需要JWT Token (主持人) 成功响应:
+
+{
+  "success": true,
+  "recordingId": "recording1"
+}
+URL: /meetings/rooms/:meetingId/recording/stop 方法: POST 认证: 需要JWT Token (主持人) 成功响应:
+
+{
+  "success": true,
+  "recordingUrl": "https://example.com/recordings/recording1.mp4"
+}
+5. 文件上传
+5.1 上传文件
+URL: /upload 方法: POST 认证: 需要JWT Token Content-Type: multipart/form-data 表单数据:
+
+file: 文件对象
+成功响应:
+
+{
+  "url": "https://example.com/uploads/file123.jpg",
+  "filename": "document.pdf",
+  "size": 204800,
+  "type": "application/pdf",
+  "id": "file123"
+}
+6. WebSocket通信
+6.1 连接信息
+URL: ws://localhost:8080/ws 认证: 需要在URL参数中提供JWT Token: ?token=jwt_token_here
+
+6.2 消息类型
+用户位置更新:
+
+{
+  "type": "POSITION_UPDATE",
+  "data": {
+    "userId": "1",
+    "spaceId": "1",
+    "position": { "x": 50, "y": 30 }
+  }
+}
+新消息通知:
+
+{
+  "type": "NEW_MESSAGE",
+  "data": {
+    "channelId": "channel1",
+    "message": {...}
+  }
+}
+会议状态更新:
+
+{
+  "type": "MEETING_STATUS",
+  "data": {
+    "meetingId": "meeting1",
+    "participants": [...]
+  }
+}
+错误处理
+所有API返回标准的HTTP状态码:
+
+200 OK: 请求成功
+400 Bad Request: 请求参数错误
+401 Unauthorized: 未授权
+403 Forbidden: 权限不足
+404 Not Found: 资源不存在
+500 Internal Server Error: 服务器错误
+错误响应格式:
+
+{
+  "error": "错误消息",
+  "message": "详细错误描述"
+}
+
+TypeScript 类型定义：src/renderer/src/types/index.ts 具体内容如下：
+
+// 统一的用户类型定义
+export interface User {
+  id: string;
+  name: string;
+  avatar: string;
+  avatarType?: 'emoji' | 'image';
+  status: 'online' | 'away' | 'busy' | 'offline';
+  role: string;
+  position?: { x: number; y: number };
+  email?: string; // 可选字段，仅在认证时使用
+}
+
+数据库设计：
+use office_db;
+- - 企业与成员
+CREATE TABLE tenant (
+id BIGINT PRIMARY KEY AUTO_INCREMENT,
+code VARCHAR(64) NOT NULL UNIQUE,
+name VARCHAR(128) NOT NULL,
+contact_email VARCHAR(128),
+contact_phone VARCHAR(32),
+plan_type VARCHAR(64) NOT NULL,
+status TINYINT NOT NULL DEFAULT 1, -- 1:启用 0:停用
+expired_at DATETIME NULL,
+created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE tenant_subscription (
+id BIGINT PRIMARY KEY AUTO_INCREMENT,
+tenant_id BIGINT NOT NULL,
+plan_name VARCHAR(64) NOT NULL,
+seat_limit INT NOT NULL,
+feature_flags JSON,
+start_time DATETIME NOT NULL,
+end_time DATETIME NOT NULL,
+created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+FOREIGN KEY (tenant_id) REFERENCES tenant(id)
+);
+
+CREATE TABLE user_account (
+id BIGINT PRIMARY KEY AUTO_INCREMENT,
+username VARCHAR(64) NOT NULL UNIQUE,
+email VARCHAR(128) UNIQUE,
+phone VARCHAR(32) UNIQUE,
+password_hash VARCHAR(255) NOT NULL,
+default_lang VARCHAR(16) DEFAULT 'en',
+timezone VARCHAR(64) DEFAULT 'UTC',
+status TINYINT NOT NULL DEFAULT 1,
+created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE tenant_member (
+id BIGINT PRIMARY KEY AUTO_INCREMENT,
+tenant_id BIGINT NOT NULL,
+user_id BIGINT NOT NULL,
+display_name VARCHAR(128),
+title VARCHAR(128),
+role_code VARCHAR(64),
+permissions JSON,
+joined_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+status TINYINT NOT NULL DEFAULT 1,
+UNIQUE KEY uk_tenant_user (tenant_id, user_id),
+FOREIGN KEY (tenant_id) REFERENCES tenant(id),
+FOREIGN KEY (user_id) REFERENCES user_account(id)
+);
+
+CREATE TABLE member_profile (
+id BIGINT PRIMARY KEY AUTO_INCREMENT,
+member_id BIGINT NOT NULL UNIQUE,
+avatar_url VARCHAR(255),
+avatar_config JSON,
+signature VARCHAR(255),
+bgm_url VARCHAR(255),
+theme VARCHAR(64),
+updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+FOREIGN KEY (member_id) REFERENCES tenant_member(id)
+);
+
+- - 虚拟办公室
+CREATE TABLE virtual_space (
+id BIGINT PRIMARY KEY AUTO_INCREMENT,
+tenant_id BIGINT NOT NULL,
+name VARCHAR(128) NOT NULL,
+layout_config JSON NOT NULL,
+max_capacity INT DEFAULT 100,
+background_url VARCHAR(255),
+created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+FOREIGN KEY (tenant_id) REFERENCES tenant(id)
+);
+
+CREATE TABLE virtual_space_zone (
+id BIGINT PRIMARY KEY AUTO_INCREMENT,
+space_id BIGINT NOT NULL,
+name VARCHAR(128) NOT NULL,
+zone_type VARCHAR(64),
+area_config JSON,
+constraints JSON,
+FOREIGN KEY (space_id) REFERENCES virtual_space(id)
+);
+
+CREATE TABLE member_presence (
+id BIGINT PRIMARY KEY AUTO_INCREMENT,
+member_id BIGINT NOT NULL,
+space_id BIGINT NOT NULL,
+zone_id BIGINT,
+pos_x DECIMAL(10,4),
+pos_y DECIMAL(10,4),
+status VARCHAR(32) NOT NULL, -- online, away, busy...
+last_heartbeat DATETIME NOT NULL,
+INDEX idx_space_member (space_id, member_id),
+FOREIGN KEY (member_id) REFERENCES tenant_member(id),
+FOREIGN KEY (space_id) REFERENCES virtual_space(id),
+FOREIGN KEY (zone_id) REFERENCES virtual_space_zone(id)
+);
+
+CREATE TABLE presence_event_log (
+id BIGINT PRIMARY KEY AUTO_INCREMENT,
+member_id BIGINT NOT NULL,
+event_type VARCHAR(32) NOT NULL, -- login/logout/move
+detail JSON,
+occurred_at DATETIME NOT NULL,
+INDEX idx_member_time (member_id, occurred_at),
+FOREIGN KEY (member_id) REFERENCES tenant_member(id)
+);
+
+- - 聊天与翻译
+CREATE TABLE chat_channel (
+id BIGINT PRIMARY KEY AUTO_INCREMENT,
+tenant_id BIGINT NOT NULL,
+channel_type VARCHAR(32) NOT NULL, -- direct/group/system
+name VARCHAR(128),
+owner_member_id BIGINT,
+metadata JSON,
+created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+FOREIGN KEY (tenant_id) REFERENCES tenant(id),
+FOREIGN KEY (owner_member_id) REFERENCES tenant_member(id)
+);
+
+CREATE TABLE chat_channel_member (
+id BIGINT PRIMARY KEY AUTO_INCREMENT,
+channel_id BIGINT NOT NULL,
+member_id BIGINT NOT NULL,
+role_code VARCHAR(32),
+mute_until DATETIME,
+UNIQUE KEY uk_channel_member (channel_id, member_id),
+FOREIGN KEY (channel_id) REFERENCES chat_channel(id),
+FOREIGN KEY (member_id) REFERENCES tenant_member(id)
+);
+
+CREATE TABLE chat_message (
+id BIGINT PRIMARY KEY AUTO_INCREMENT,
+channel_id BIGINT NOT NULL,
+sender_member_id BIGINT NOT NULL,
+message_type VARCHAR(32) NOT NULL, -- text/image/file/voice
+content TEXT,
+extra JSON,
+reply_to BIGINT,
+recalled TINYINT DEFAULT 0,
+sent_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+INDEX idx_channel_time (channel_id, sent_at),
+FOREIGN KEY (channel_id) REFERENCES chat_channel(id),
+FOREIGN KEY (sender_member_id) REFERENCES tenant_member(id),
+FOREIGN KEY (reply_to) REFERENCES chat_message(id)
+);
+
+CREATE TABLE chat_translation (
+id BIGINT PRIMARY KEY AUTO_INCREMENT,
+message_id BIGINT NOT NULL,
+target_lang VARCHAR(16) NOT NULL,
+translated_text TEXT NOT NULL,
+engine VARCHAR(64),
+latency_ms INT,
+created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+UNIQUE KEY uk_msg_lang (message_id, target_lang),
+FOREIGN KEY (message_id) REFERENCES chat_message(id)
+);
+
+CREATE TABLE chat_attachment (
+id BIGINT PRIMARY KEY AUTO_INCREMENT,
+message_id BIGINT NOT NULL,
+file_name VARCHAR(255),
+file_type VARCHAR(64),
+file_size BIGINT,
+storage_url VARCHAR(255),
+encryption_meta JSON,
+created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+FOREIGN KEY (message_id) REFERENCES chat_message(id)
+);
+
+- - 快速会议
+CREATE TABLE meeting_room (
+id BIGINT PRIMARY KEY AUTO_INCREMENT,
+tenant_id BIGINT NOT NULL,
+host_member_id BIGINT NOT NULL,
+topic VARCHAR(255),
+meeting_type VARCHAR(32), -- ad-hoc/scheduled
+start_time DATETIME NOT NULL,
+end_time DATETIME,
+status VARCHAR(32) NOT NULL, -- planned/live/ended
+options JSON, -- token策略/录制配置
+created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+FOREIGN KEY (tenant_id) REFERENCES tenant(id),
+FOREIGN KEY (host_member_id) REFERENCES tenant_member(id)
+);
+
+CREATE TABLE meeting_participant (
+id BIGINT PRIMARY KEY AUTO_INCREMENT,
+meeting_id BIGINT NOT NULL,
+member_id BIGINT,
+guest_email VARCHAR(128),
+role_code VARCHAR(32), -- host/cohost/attendee
+joined_at DATETIME,
+left_at DATETIME,
+device_info JSON,
+screen_share TINYINT DEFAULT 0,
+UNIQUE KEY uk_meeting_member (meeting_id, member_id),
+FOREIGN KEY (meeting_id) REFERENCES meeting_room(id),
+FOREIGN KEY (member_id) REFERENCES tenant_member(id)
+);
+
+CREATE TABLE meeting_invitation (
+id BIGINT PRIMARY KEY AUTO_INCREMENT,
+meeting_id BIGINT NOT NULL,
+inviter_id BIGINT NOT NULL,
+invitee_id BIGINT,
+invitee_email VARCHAR(128),
+status VARCHAR(32) NOT NULL, -- pending/accepted/declined
+expires_at DATETIME,
+created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+FOREIGN KEY (meeting_id) REFERENCES meeting_room(id),
+FOREIGN KEY (inviter_id) REFERENCES tenant_member(id),
+FOREIGN KEY (invitee_id) REFERENCES tenant_member(id)
+);
+
+CREATE TABLE meeting_recording (
+id BIGINT PRIMARY KEY AUTO_INCREMENT,
+meeting_id BIGINT NOT NULL,
+storage_url VARCHAR(255) NOT NULL,
+duration_sec INT,
+transcript_url VARCHAR(255),
+status VARCHAR(32) NOT NULL, -- processing/done
+created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+FOREIGN KEY (meeting_id) REFERENCES meeting_room(id)
+);
+
+- - 呼叫/快速交流
+CREATE TABLE call_session (
+id BIGINT PRIMARY KEY AUTO_INCREMENT,
+tenant_id BIGINT NOT NULL,
+caller_member_id BIGINT NOT NULL,
+callee_member_id BIGINT NOT NULL,
+call_type VARCHAR(32) NOT NULL, -- audio/video
+status VARCHAR(32) NOT NULL, -- ringing/connected/ended
+started_at DATETIME,
+ended_at DATETIME,
+metadata JSON,
+FOREIGN KEY (tenant_id) REFERENCES tenant(id),
+FOREIGN KEY (caller_member_id) REFERENCES tenant_member(id),
+FOREIGN KEY (callee_member_id) REFERENCES tenant_member(id)
+);
+
+CREATE TABLE call_event_log (
+id BIGINT PRIMARY KEY AUTO_INCREMENT,
+call_id BIGINT NOT NULL,
+event_type VARCHAR(32) NOT NULL,
+detail JSON,
+occurred_at DATETIME NOT NULL,
+FOREIGN KEY (call_id) REFERENCES call_session(id)
+);
+
+- - 系统支撑
+CREATE TABLE notification_task (
+id BIGINT PRIMARY KEY AUTO_INCREMENT,
+tenant_id BIGINT,
+target_member_id BIGINT,
+channel VARCHAR(32) NOT NULL, -- websocket/email/push
+template_code VARCHAR(64),
+payload JSON,
+status VARCHAR(32) NOT NULL, -- pending/sent/failed
+retry_count INT DEFAULT 0,
+created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+sent_at DATETIME,
+FOREIGN KEY (tenant_id) REFERENCES tenant(id),
+FOREIGN KEY (target_member_id) REFERENCES tenant_member(id)
+);
+
+CREATE TABLE translator_usage (
+id BIGINT PRIMARY KEY AUTO_INCREMENT,
+tenant_id BIGINT NOT NULL,
+engine VARCHAR(64) NOT NULL,
+char_count INT NOT NULL,
+cost_cent DECIMAL(10,2),
+requested_by BIGINT,
+created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+FOREIGN KEY (tenant_id) REFERENCES tenant(id),
+FOREIGN KEY (requested_by) REFERENCES tenant_member(id)
+);
+
+CREATE TABLE activity_audit (
+id BIGINT PRIMARY KEY AUTO_INCREMENT,
+tenant_id BIGINT,
+actor_member_id BIGINT,
+action VARCHAR(64) NOT NULL,
+target_type VARCHAR(64),
+target_id VARCHAR(64),
+detail JSON,
+ip_address VARCHAR(64),
+user_agent VARCHAR(255),
+result VARCHAR(32),
+occurred_at DATETIME NOT NULL,
+INDEX idx_tenant_time (tenant_id, occurred_at),
+FOREIGN KEY (tenant_id) REFERENCES tenant(id),
+FOREIGN KEY (actor_member_id) REFERENCES tenant_member(id)
+);
+
+CREATE TABLE file_resource (
+id BIGINT PRIMARY KEY AUTO_INCREMENT,
+tenant_id BIGINT,
+module VARCHAR(64) NOT NULL,
+file_name VARCHAR(255),
+storage_key VARCHAR(255) NOT NULL,
+mime_type VARCHAR(128),
+size_bytes BIGINT,
+hash_sha256 VARCHAR(128),
+visibility VARCHAR(32) NOT NULL, -- private/public
+created_by BIGINT,
+created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+FOREIGN KEY (tenant_id) REFERENCES tenant(id),
+FOREIGN KEY (created_by) REFERENCES tenant_member(id)
+);
+
+CREATE TABLE webhook_endpoint (
+id BIGINT PRIMARY KEY AUTO_INCREMENT,
+tenant_id BIGINT NOT NULL,
+name VARCHAR(128),
+url VARCHAR(255) NOT NULL,
+secret VARCHAR(128),
+events JSON,
+status TINYINT NOT NULL DEFAULT 1,
+created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+FOREIGN KEY (tenant_id) REFERENCES tenant(id)
+);
